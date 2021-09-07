@@ -4,13 +4,20 @@ const model = require("./rhinoceros");
 const { allowSpeciesTable, allowedNameTable } = require("./conts/const");
 
 router.get("/rhinoceros", async (ctx, next) => {
-  const { id } = ctx.request.query;
-
-  console.log("id", id);
+  try{
 
   const rhinoceroses = model.getAll();
+  ctx.response.body = { rhinoceroses };
+  } catch(error){
+      ctx.throw(500, error);
+  }
+});
 
-  if (id) {
+router.get("/rhinocerosID", async (ctx, next) => {
+  try{
+    await console.log("get->id",ctx.params);
+    const { id } = ctx.request.query;
+    if (id) {
     const rhino = await model.getRhinoById(id);
     if (rhino) {
       ctx.response.body = { rhino };
@@ -23,9 +30,13 @@ router.get("/rhinoceros", async (ctx, next) => {
     };
     return;
   }
+  const rhinoceroses = model.getAll();
   ctx.response.body = { rhinoceroses };
-});
 
+  } catch(error){
+      ctx.throw(500, error);
+  }
+});
 const IsRulePropertyNameSpeciesEnforced = async (rhinoObject) => {
   const properties = Object.keys(rhinoObject);
 
@@ -35,23 +46,17 @@ const IsRulePropertyNameSpeciesEnforced = async (rhinoObject) => {
   );
   // check if the number of properties are at least the same or higher
   if (properties.length < allowedNameTable.size) arePropertiesValid = false;
-
   await console.log("arePropVal", arePropertiesValid);
-
   return arePropertiesValid;
 };
 
 const IsRuleNameSpeciesValuesEnforced = (rhinoObject) => {
-  // const table set
-  // get it from hash table from const file
-
+  
   let areSpeciesNamesAllowed = false;
-
   if (allowSpeciesTable.has(rhinoObject.species)) {
     areSpeciesNamesAllowed = true;
     return areSpeciesNamesAllowed;
   }
-
   return areSpeciesNamesAllowed;
 };
 
