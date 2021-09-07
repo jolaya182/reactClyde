@@ -4,6 +4,17 @@ let rhinoceroses = require('./data');
 exports.getAll = () => {
   return rhinoceroses;
 };
+exports.getRhinoById = async (id) => {
+
+  const rhino = await rhinoceroses.find((rhino)=>{
+    const rhId = rhino.id;
+    if( rhId === id) return true;
+    return false;
+  });
+
+  console.log("rhino", rhino);
+  return rhino;
+};
 
 exports.newRhinoceros = data => {
   const newRhino = {

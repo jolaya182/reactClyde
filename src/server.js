@@ -11,6 +11,7 @@ app.use(bodyParser());
 
 app.use(async (ctx, next) => {
   console.log('request received', { method: ctx.method, path: ctx.path });
+
   await next();
 });
 
