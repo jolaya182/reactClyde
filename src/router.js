@@ -4,37 +4,50 @@ const model = require("./rhinoceros");
 const { allowSpeciesTable, allowedNameTable } = require("./conts/const");
 
 router.get("/rhinoceros", async (ctx, next) => {
-  try{
+  try {
+    const { query } = ctx.request;
+    const allParameters = Object.keys(query);
+    let allRhinoceros = model.getAll();
+    let filteredRhinceros = [];
+    let rhinosArrayList = new Map();
 
-  const rhinoceroses = model.getAll();
-  ctx.response.body = { rhinoceroses };
-  } catch(error){
-      ctx.throw(500, error);
+    allParameters.forEach((props) => {
+      console.log("props", props);
+      rhinosArrayList.set(props, allRhinoceros);
+      filteredRhinceros = rhinosArrayList.get(props).filter((rhino) => {
+        return rhino[props] === query[props];
+      });
+      allRhinoceros = filteredRhinceros;
+    });
+
+    ctx.response.body = { allRhinoceros };
+  } catch (error) {
+    ctx.throw(500, error);
   }
 });
 
 router.get("/rhinocerosID", async (ctx, next) => {
-  try{
-    await console.log("get->id",ctx.params);
-    const { id } = ctx.request.query;
+  try {
+    await console.log("get->id", ctx.params);
+    const { query } = ctx.request;
+    const { id } = query;
     if (id) {
-    const rhino = await model.getRhinoById(id);
-    if (rhino) {
-      ctx.response.body = { rhino };
+      const rhino = await model.getRhinoById(id);
+      if (rhino) {
+        ctx.response.body = { rhino };
+        return;
+      }
+      ctx.response.body = {
+        id: -1,
+        name: "name not found",
+        species: "species not found",
+      };
       return;
     }
-    ctx.response.body = {
-      id: -1,
-      name: "name not found",
-      species: "species not found",
-    };
-    return;
-  }
-  const rhinoceroses = model.getAll();
-  ctx.response.body = { rhinoceroses };
-
-  } catch(error){
-      ctx.throw(500, error);
+    const rhinoceroses = model.getAll();
+    ctx.response.body = { rhinoceroses };
+  } catch (error) {
+    ctx.throw(500, error);
   }
 });
 const IsRulePropertyNameSpeciesEnforced = async (rhinoObject) => {
@@ -51,7 +64,6 @@ const IsRulePropertyNameSpeciesEnforced = async (rhinoObject) => {
 };
 
 const IsRuleNameSpeciesValuesEnforced = (rhinoObject) => {
-  
   let areSpeciesNamesAllowed = false;
   if (allowSpeciesTable.has(rhinoObject.species)) {
     areSpeciesNamesAllowed = true;
