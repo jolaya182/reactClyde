@@ -4,8 +4,8 @@ let rhinoceroses = require('./data');
 exports.getAll = () => {
   return rhinoceroses;
 };
-exports.getRhinoById = async (id) => {
-  const rhino = await rhinoceroses.find((rhino)=>{
+exports.getRhinoById =  (id) => {
+  const rhino =  rhinoceroses.find((rhino)=>{
     const rhId = rhino.id;
     if( rhId === id) return true;
     return false;
