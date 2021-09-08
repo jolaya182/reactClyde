@@ -3,18 +3,16 @@ const router = new Router();
 const model = require("./rhinoceros");
 const { allowSpeciesTable, allowedNameTable } = require("./conts/const");
 
-router.get("/rhinoceros", async (ctx, next) => {
+router.get("/rhinoceros", (ctx, next) => {
   try {
     const { query } = ctx.request;
     const allParameters = Object.keys(query);
     let allRhinoceros = model.getAll();
     let filteredRhinceros = [];
-    let rhinosArrayList = new Map();
 
     allParameters.forEach((props) => {
       console.log("props", props);
-      rhinosArrayList.set(props, allRhinoceros);
-      filteredRhinceros = rhinosArrayList.get(props).filter((rhino) => {
+      filteredRhinceros = allRhinoceros.filter((rhino) => {
         return rhino[props] === query[props];
       });
       allRhinoceros = filteredRhinceros;
@@ -26,21 +24,20 @@ router.get("/rhinoceros", async (ctx, next) => {
   }
 });
 
-router.get("/rhinocerosID", async (ctx, next) => {
+router.get("/rhinocerosID",  (ctx, next) => {
   try {
-    await console.log("get->id", ctx.params);
     const { query } = ctx.request;
     const { id } = query;
     if (id) {
-      const rhino = await model.getRhinoById(id);
+      const rhino =  model.getRhinoById(id);
       if (rhino) {
         ctx.response.body = { rhino };
         return;
       }
       ctx.response.body = {
         id: -1,
-        name: "name not found",
-        species: "species not found",
+        name: "name not registered",
+        species: "species not registered",
       };
       return;
     }
@@ -50,16 +47,16 @@ router.get("/rhinocerosID", async (ctx, next) => {
     ctx.throw(500, error);
   }
 });
-const IsRulePropertyNameSpeciesEnforced = async (rhinoObject) => {
+
+const IsRulePropertyNameSpeciesEnforced =  (rhinoObject) => {
   const properties = Object.keys(rhinoObject);
 
   let arePropertiesValid = false;
-  arePropertiesValid = await properties.every((prop) =>
+  arePropertiesValid =  properties.every((prop) =>
     allowedNameTable.has(prop)
   );
   // check if the number of properties are at least the same or higher
   if (properties.length < allowedNameTable.size) arePropertiesValid = false;
-  await console.log("arePropVal", arePropertiesValid);
   return arePropertiesValid;
 };
 
@@ -72,10 +69,10 @@ const IsRuleNameSpeciesValuesEnforced = (rhinoObject) => {
   return areSpeciesNamesAllowed;
 };
 
-router.post("/rhinoceros", async (ctx, next) => {
-  const { body } = ctx.request;
-  const isBodyPropertiesCorrect = await IsRulePropertyNameSpeciesEnforced(body);
-  const isBodyContentCorrect = await IsRuleNameSpeciesValuesEnforced(body);
+router.post("/rhinoceros",  (ctx, next) => {
+ try{ const { body } = ctx.request;
+  const isBodyPropertiesCorrect =  IsRulePropertyNameSpeciesEnforced(body);
+  const isBodyContentCorrect =  IsRuleNameSpeciesValuesEnforced(body);
   if (!isBodyPropertiesCorrect) {
     //throw error exception
     ctx.throw(
@@ -92,7 +89,44 @@ router.post("/rhinoceros", async (ctx, next) => {
     );
   }
 
-  ctx.response.body = model.newRhinoceros(ctx.request.body);
+  ctx.response.body = model.newRhinoceros(ctx.request.body);} catch(error)
+  {
+    ctx.throw(500, error);
+  }
 });
+
+router.get("/endangered", (ctx, next) => {
+  try{ 
+    const allRhinoceros = model.getAll();
+    const endangeredSpecies = new Map();
+    const speciesCount = new Map();
+
+    allRhinoceros.forEach(rhino => {
+      const rhinoSpecies = rhino.species;
+      if(speciesCount.has(rhinoSpecies)){
+        const currentRhinoCount = speciesCount.get(rhinoSpecies) + 1; 
+        endangeredSpecies.set(rhinoSpecies, currentRhinoCount );
+        speciesCount.set(rhinoSpecies, currentRhinoCount );
+        if( currentRhinoCount > 2 ){
+          console.log("endangeredSpecies", endangeredSpecies);
+          console.log("speciesCount", speciesCount);
+          console.log("currentRhinoCount", currentRhinoCount);
+          if(endangeredSpecies.has(rhinoSpecies) ) endangeredSpecies.delete(rhinoSpecies);
+          console.log("endangeredSpecies", endangeredSpecies);
+          
+        }
+        return
+      }
+      endangeredSpecies.set(rhinoSpecies, 1);
+      speciesCount.set(rhinoSpecies, 1);
+    });
+    console.log("end endangeredSpecies", endangeredSpecies);
+    ctx.response.body = Array.from(endangeredSpecies).map(([key, value])=>({key, value}) );
+
+  } catch(error)
+   {
+     ctx.throw(500, error);
+   }
+ });
 
 module.exports = router;
