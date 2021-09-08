@@ -11,8 +11,49 @@ exports.getRhinoById =  (id) => {
     return false;
   });
 
-  console.log("rhino", rhino);
   return rhino;
+};
+
+exports.findEndangeredRhinos = () => {
+  const endangeredSpecies = new Map();
+  const speciesCount = new Map();
+
+  rhinoceroses.forEach((rhino) => {
+    const rhinoSpecies = rhino.species;
+    if (speciesCount.has(rhinoSpecies)) {
+      const currentRhinoCount = speciesCount.get(rhinoSpecies) + 1;
+      endangeredSpecies.set(rhinoSpecies, currentRhinoCount);
+      speciesCount.set(rhinoSpecies, currentRhinoCount);
+      if (currentRhinoCount > 2) {
+        if (endangeredSpecies.has(rhinoSpecies))
+          endangeredSpecies.delete(rhinoSpecies);
+      }
+      return;
+    }
+    endangeredSpecies.set(rhinoSpecies, 1);
+    speciesCount.set(rhinoSpecies, 1);
+  });
+  const endangeredSpeciesArray = Array.from(endangeredSpecies).map(
+    ([key, value]) => ({
+      key,
+      value,
+    })
+  );
+  return endangeredSpeciesArray;
+};
+
+exports.filterRhinosByGivenParams = (query) => {
+  let allRhinoceros = [...rhinoceroses];
+  const allParameters = Object.keys(query);
+  let filteredRhinceros = [];
+
+  allParameters.forEach((props) => {
+    filteredRhinceros = allRhinoceros.filter(
+      (rhino) => rhino[props] === query[props]
+    );
+    allRhinoceros = filteredRhinceros;
+  });
+  return allRhinoceros;
 };
 
 exports.newRhinoceros = data => {
