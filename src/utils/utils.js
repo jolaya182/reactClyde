@@ -1,5 +1,17 @@
+/**
+ * @title: utils.js
+ * @author: Javier Olaya
+ * @date: 9/8/2021
+ * @description: all the resuable functions throughout the application
+ */
 const { allowSpeciesTable, allowedNameTable } = require('../const/const1');
 
+/**
+ * determines if the rhino found is true
+ *
+ * @param {object} rhino
+ * @return {boolean}
+ */
 const isRhinoByIdFound = (rhino) => {
   if (rhino) {
     return rhino;
@@ -12,6 +24,14 @@ const isRhinoByIdFound = (rhino) => {
   return rhinoNotFound;
 };
 
+/**
+ * checks the rhino object properties to see if they
+ * include name and species
+ *
+ * @param {object} rhinoObject
+ * @param {boolean} isFilterOff
+ * @return {boolean}
+ */
 const IsRulePropertyNameSpeciesEnforced = (rhinoObject, isFilterOff) => {
   const properties = Object.keys(rhinoObject);
 
@@ -22,6 +42,13 @@ const IsRulePropertyNameSpeciesEnforced = (rhinoObject, isFilterOff) => {
   return arePropertiesValid;
 };
 
+/**
+ * checks to see if the species names of the given
+ * rhino matches with the correct names accepted by the application
+ *
+ * @param {object} rhinoObject
+ * @return {boolean}
+ */
 const IsRuleNameSpeciesValuesEnforced = (rhinoObject) => {
   let areSpeciesNamesAllowed = false;
   if (allowSpeciesTable.has(rhinoObject.species)) {
@@ -31,6 +58,15 @@ const IsRuleNameSpeciesValuesEnforced = (rhinoObject) => {
   return areSpeciesNamesAllowed;
 };
 
+/**
+ * checks if the length of the name to the
+ * rhinoceros is within 20 charaters and is
+ * a valid string
+ *
+ * @param {object} rhinoObject
+ * @param {boolean} isFilterOff
+ * @return {boolean}
+ */
 const isRuleNameLengthOfCharactersValidEnforced = (
   rhinoObject,
   isFilterOff
@@ -45,10 +81,24 @@ const isRuleNameLengthOfCharactersValidEnforced = (
   return numberOfCharactersValid;
 };
 
+/**
+ * helper function to throw errors
+ *
+ * @param {string} message
+ * @param {object} ctx
+ */
 const errorThrower = (message, ctx) => {
   ctx.throw(400, message);
 };
 
+/**
+ * checks that the parameters received comply with all
+ * the rules of the application
+ *
+ * @param {object} rhino
+ * @param {boolean} isFilterOff
+ * @return {boolean}
+ */
 const areAllRulesBroken = (rhino, isFilterOff) => {
   const isBodyPropertiesCorrect = IsRulePropertyNameSpeciesEnforced(
     rhino,
@@ -74,6 +124,12 @@ const areAllRulesBroken = (rhino, isFilterOff) => {
   return false;
 };
 
+/**
+ * determines is given id is found
+ *
+ * @param {interger} id
+ * @return {boolean}
+ */
 const isIdMissing = (id) => {
   const message = `missing id parameter,\n please provide a rhino id`;
   if (!id) return message;

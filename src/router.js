@@ -1,3 +1,9 @@
+/**
+ * @title: router.js
+ * @author: Javier Olaya
+ * @date: 9/8/2021
+ * @description: contains the koa routting of the application
+ */
 const Router = require('koa-router');
 
 const router = new Router();
@@ -7,8 +13,13 @@ const {
   areAllRulesBroken,
   isIdMissing,
   errorThrower
-} = require('./utils/utils.js');
+} = require('./utils/utils');
 
+/**
+ * route that returns every rhinoceros or
+ * a filtered part of the rhinoceros data
+ *
+ */
 router.get('/rhinoceros', (ctx) => {
   try {
     const { query } = ctx.request;
@@ -23,6 +34,10 @@ router.get('/rhinoceros', (ctx) => {
   }
 });
 
+/**
+ * route that finds the rhinoceros by Id
+ *
+ */
 router.get('/rhinocerosID', (ctx) => {
   try {
     const { query } = ctx.request;
@@ -39,15 +54,23 @@ router.get('/rhinocerosID', (ctx) => {
   }
 });
 
+/**
+ * route that return all the rhinos sepecies that are endangered
+ *
+ *
+ */
 router.get('/endangered', (ctx) => {
   try {
-    // const allRhinoceros = model.getAll();
     ctx.response.body = model.findEndangeredRhinos();
   } catch (error) {
     ctx.throw(500, error);
   }
 });
 
+/**
+ * route that allows inserts of rhino objects to the json data object
+ *
+ */
 router.post('/rhinoceros', (ctx) => {
   try {
     const { body } = ctx.request;

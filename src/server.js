@@ -1,3 +1,9 @@
+/**
+ * @title: server.js
+ * @author: Javier Olaya
+ * @date: 9/7/2021
+ * @description: contains the main server that applications
+ */
 const Koa = require('koa');
 
 const app = new Koa();

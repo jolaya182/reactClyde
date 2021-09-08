@@ -1,9 +1,27 @@
+/**
+ * @title: rhinoceros.js
+ * @author: Javier Olaya
+ * @date: 9/7/2021
+ * @description: model that holds all the data and functions pertaining to the rhinoceros model
+ */
 const { v4: uuidv4 } = require('uuid');
 const rhinoceroses = require('./data');
 
+/**
+ * gets all the rhinoceros data
+ *
+ * @return {object}
+ */
 exports.getAll = () => {
   return rhinoceroses;
 };
+
+/**
+ * finds the specific rhino by id
+ *
+ * @param {integer} id
+ * @return {object}
+ */
 exports.getRhinoById = (id) => {
   const rhin = rhinoceroses.find((rhino) => {
     const rhId = rhino.id;
@@ -14,6 +32,11 @@ exports.getRhinoById = (id) => {
   return rhin;
 };
 
+/**
+ * searches for all endangered rhinos
+ *
+ * @return {array}
+ */
 exports.findEndangeredRhinos = () => {
   const endangeredSpecies = new Map();
   const speciesCount = new Map();
@@ -42,6 +65,13 @@ exports.findEndangeredRhinos = () => {
   return endangeredSpeciesArray;
 };
 
+/**
+ * filter function that
+ * searches for all the rhinoceros with the criteria given by parameters
+ *
+ * @param {object} query
+ * @return {array}
+ */
 exports.filterRhinosByGivenParams = (query) => {
   let allRhinoceros = [...rhinoceroses];
   const allParameters = Object.keys(query);
@@ -56,6 +86,12 @@ exports.filterRhinosByGivenParams = (query) => {
   return allRhinoceros;
 };
 
+/**
+ * creates a new rhino object
+ *
+ * @param {object} data
+ * @return {object}
+ */
 exports.newRhinoceros = (data) => {
   const newRhino = {
     id: uuidv4(),

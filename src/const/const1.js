@@ -1,3 +1,9 @@
+/**
+ * @title: const1.js
+ * @author: Javier Olaya
+ * @date: 9/8/2021
+ * @description: contains all the constant values of the application
+ */
 const allowedNameTable = new Set();
 allowedNameTable.add('name');
 allowedNameTable.add('species');
