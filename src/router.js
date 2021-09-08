@@ -1,14 +1,15 @@
-const Router = require("koa-router");
+const Router = require('koa-router');
+
 const router = new Router();
-const model = require("./rhinoceros");
+const model = require('./rhinoceros');
 const {
   isRhinoByIdFound,
   areAllRulesBroken,
   isIdMissing,
-  errorThrower,
-} = require("./utils/utils.js");
+  errorThrower
+} = require('./utils/utils.js');
 
-router.get("/rhinoceros", (ctx, next) => {
+router.get('/rhinoceros', (ctx) => {
   try {
     const { query } = ctx.request;
     const isFilterOff = false;
@@ -22,7 +23,7 @@ router.get("/rhinoceros", (ctx, next) => {
   }
 });
 
-router.get("/rhinocerosID", (ctx, next) => {
+router.get('/rhinocerosID', (ctx) => {
   try {
     const { query } = ctx.request;
     const { id } = query;
@@ -38,7 +39,7 @@ router.get("/rhinocerosID", (ctx, next) => {
   }
 });
 
-router.get("/endangered", (ctx, next) => {
+router.get('/endangered', (ctx) => {
   try {
     // const allRhinoceros = model.getAll();
     ctx.response.body = model.findEndangeredRhinos();
@@ -47,7 +48,7 @@ router.get("/endangered", (ctx, next) => {
   }
 });
 
-router.post("/rhinoceros", (ctx, next) => {
+router.post('/rhinoceros', (ctx) => {
   try {
     const { body } = ctx.request;
     const isFilterOff = true;

@@ -1,17 +1,17 @@
-const {v4:uuidv4} = require('uuid');
-let rhinoceroses = require('./data');
+const { v4: uuidv4 } = require('uuid');
+const rhinoceroses = require('./data');
 
 exports.getAll = () => {
   return rhinoceroses;
 };
-exports.getRhinoById =  (id) => {
-  const rhino =  rhinoceroses.find((rhino)=>{
+exports.getRhinoById = (id) => {
+  const rhin = rhinoceroses.find((rhino) => {
     const rhId = rhino.id;
-    if( rhId === id) return true;
+    if (rhId === id) return true;
     return false;
   });
 
-  return rhino;
+  return rhin;
 };
 
 exports.findEndangeredRhinos = () => {
@@ -36,7 +36,7 @@ exports.findEndangeredRhinos = () => {
   const endangeredSpeciesArray = Array.from(endangeredSpecies).map(
     ([key, value]) => ({
       key,
-      value,
+      value
     })
   );
   return endangeredSpeciesArray;
@@ -56,11 +56,11 @@ exports.filterRhinosByGivenParams = (query) => {
   return allRhinoceros;
 };
 
-exports.newRhinoceros = data => {
+exports.newRhinoceros = (data) => {
   const newRhino = {
     id: uuidv4(),
     name: data.name,
-    species: data.species,
+    species: data.species
   };
   rhinoceroses.push(newRhino);
   return newRhino;

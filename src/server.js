@@ -1,7 +1,8 @@
-const Koa = require('koa'),
-  app = new Koa(),
-  bodyParser = require('koa-bodyparser'),
-  router = require('./router');
+const Koa = require('koa');
+
+const app = new Koa();
+const bodyParser = require('koa-bodyparser');
+const router = require('./router');
 
 const PORT = process.env.PORT || 3000;
 
