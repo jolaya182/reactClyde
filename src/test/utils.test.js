@@ -1,8 +1,12 @@
 /* global test, expect, describe  */
-const utils = require('../utils/utils');
+// eslint-disable-next-line import/extensions
+const { RhinoRules } = require('../utils/RhinoRules');
+
+const rhinoRulesInstant = new RhinoRules();
 
 test('createRhinoMissingObject should return an object with  negative and prop names that not registered', () => {
-  const createdRhinoMissingObjectReceived = utils.createRhinoMissingObject();
+  const createdRhinoMissingObjectReceived =
+    rhinoRulesInstant.createRhinoMissingObject();
   const RhinoMissingObjectExpected = {
     id: -1,
     name: 'name not registered',
@@ -29,33 +33,37 @@ describe.each(rhinoTestObjects1)(
     const { name, species } = rhinoBody;
 
     test('areAnyParameterRulesBroken for the parameters should return true', () => {
-      const receivedTestObject = utils.areAnyParameterRulesBroken(rhinoBody);
+      const receivedTestObject =
+        rhinoRulesInstant.areAnyParameterRulesBroken(rhinoBody);
       expect(receivedTestObject.isRuleBroken).toBe(false);
     });
 
     test('isNameInParametersMissing name should return true', () => {
-      const receivedBoolean = utils.isNameInParametersMissing(name);
+      const receivedBoolean = rhinoRulesInstant.isNameInParametersMissing(name);
       expect(receivedBoolean).toBe(false);
     });
 
     test('doesNameBrakeCharactersLimit', () => {
-      const receivedBoolean = utils.doesNameBrakeCharactersLimit(name);
+      const receivedBoolean =
+        rhinoRulesInstant.doesNameBrakeCharactersLimit(name);
       expect(receivedBoolean).toBe(false);
     });
 
     test('isSpeciesInParametersMissing', () => {
-      const receivedBoolean = utils.isSpeciesInParametersMissing(rhinoBody);
+      const receivedBoolean =
+        rhinoRulesInstant.isSpeciesInParametersMissing(rhinoBody);
       expect(receivedBoolean).toBe(false);
     });
 
     test('doesSpeciesBreakCorrectSyntax', () => {
-      const receivedBoolean = utils.doesSpeciesBreakCorrectSyntax(species);
+      const receivedBoolean =
+        rhinoRulesInstant.doesSpeciesBreakCorrectSyntax(species);
       expect(receivedBoolean).toBe(false);
     });
 
     test.only('areParametersBreakingNameSpeciesOnlyRule', () => {
       const receivedBoolean =
-        utils.areParametersBreakingNameSpeciesOnlyRule(rhinoBody);
+        rhinoRulesInstant.areParametersBreakingNameSpeciesOnlyRule(rhinoBody);
       expect(receivedBoolean).toBe(false);
     });
   }
@@ -70,42 +78,43 @@ const missingParametersRhinoBody = {};
 
 const rhinoTestObjects2 = [nonValidRhinoBody, missingParametersRhinoBody];
 
-describe.only.each(rhinoTestObjects2)(
+describe.each(rhinoTestObjects2)(
   'areAnyParameterRulesBroken should test a non-valid rhino on 6 functions',
   (rhinoBody) => {
     const { name, species } = rhinoBody;
 
     test('areAnyParameterRulesBroken for the parameters should return true', () => {
-      const receivedTestObject = utils.areAnyParameterRulesBroken(rhinoBody);
-      // console.log('receivedTestObject', receivedTestObject);
+      const receivedTestObject =
+        rhinoRulesInstant.areAnyParameterRulesBroken(rhinoBody);
       expect(receivedTestObject.isRuleBroken).toBe(true);
     });
 
     test('isNameInParametersMissing name should return true', () => {
-      const receivedBoolean = utils.isNameInParametersMissing(name);
-      // console.log('receivedTestObject', receivedTestObject);
+      const receivedBoolean = rhinoRulesInstant.isNameInParametersMissing(name);
       expect(receivedBoolean).toBe(true);
     });
 
     test('doesNameBrakeCharactersLimit', () => {
-      const receivedBoolean = utils.doesNameBrakeCharactersLimit(name);
-      //   console.log('receivedBoolean', receivedBoolean);
+      const receivedBoolean =
+        rhinoRulesInstant.doesNameBrakeCharactersLimit(name);
       expect(receivedBoolean).toBe(true);
     });
 
     test('isSpeciesInParametersMissing', () => {
-      const receivedBoolean = utils.isSpeciesInParametersMissing(rhinoBody);
+      const receivedBoolean =
+        rhinoRulesInstant.isSpeciesInParametersMissing(rhinoBody);
       expect(receivedBoolean).toBe(true);
     });
 
     test('doesSpeciesBreakCorrectSyntax', () => {
-      const receivedBoolean = utils.doesSpeciesBreakCorrectSyntax(species);
+      const receivedBoolean =
+        rhinoRulesInstant.doesSpeciesBreakCorrectSyntax(species);
       expect(receivedBoolean).toBe(true);
     });
 
     test('areParametersBreakingNameSpeciesOnlyRule', () => {
       const receivedBoolean =
-        utils.areParametersBreakingNameSpeciesOnlyRule(rhinoBody);
+        rhinoRulesInstant.areParametersBreakingNameSpeciesOnlyRule(rhinoBody);
       expect(receivedBoolean).toBe(true);
     });
   }

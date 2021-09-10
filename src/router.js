@@ -7,11 +7,11 @@
 const Router = require('koa-router');
 
 const router = new Router();
-const model = require('./rhinoceros');
-const {
-  createRhinoMissingObject,
-  areAnyParameterRulesBroken
-} = require('./utils/utils');
+const { Rhinoceroses } = require('./rhinoceros');
+const { RhinoRules } = require('./utils/RhinoRules');
+
+const rhinos = new Rhinoceroses();
+const RhinoRuleInstant = new RhinoRules();
 
 /**
  * route that returns every rhinoceros or
@@ -21,7 +21,7 @@ const {
 router.get('/rhinoceros', (ctx, next) => {
   try {
     const { query } = ctx.request;
-    const allRhinocerosFiltered = model.filterRhinosByGivenParams(query);
+    const allRhinocerosFiltered = rhinos.filterRhinosByGivenParams(query);
     ctx.response.body = allRhinocerosFiltered;
     next();
   } catch (error) {
@@ -34,9 +34,9 @@ router.get('/rhinocerosID', (ctx) => {
     const { query } = ctx.request;
     const { id } = query;
 
-    let retrievedRhinoObject = model.getRhinoById(id);
+    let retrievedRhinoObject = rhinos.getRhinoById(id);
     if (retrievedRhinoObject === undefined)
-      retrievedRhinoObject = createRhinoMissingObject();
+      retrievedRhinoObject = RhinoRuleInstant.createRhinoMissingObject();
 
     ctx.response.body = { retrievedRhinoObject };
   } catch (error) {
@@ -49,7 +49,7 @@ router.get('/rhinocerosID', (ctx) => {
  */
 router.get('/endangered', (ctx) => {
   try {
-    ctx.response.body = model.findEndangeredRhinos();
+    ctx.response.body = rhinos.findEndangeredRhinos();
   } catch (error) {
     ctx.throw(500, error);
   }
@@ -62,13 +62,14 @@ router.get('/endangered', (ctx) => {
 router.post('/rhinoceros', (ctx) => {
   try {
     const { body } = ctx.request;
-    const { isRuleBroken, errorMessage } = areAnyParameterRulesBroken(body);
+    const { isRuleBroken, errorMessage } =
+      RhinoRuleInstant.areAnyParameterRulesBroken(body);
 
     if (isRuleBroken) {
       ctx.throw(400, errorMessage);
       return;
     }
-    ctx.response.body = model.newRhinoceros(body);
+    ctx.response.body = rhinos.newRhinoceros(body);
   } catch (error) {
     ctx.throw(500, error);
   }
