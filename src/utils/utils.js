@@ -35,8 +35,7 @@ const errorThrower = (message, ctx) => {
  * @param {object} body
  * @return {boolean}
  */
-const isNameInParametersMissing = (body) => {
-  const { name } = body;
+const isNameInParametersMissing = (name) => {
   if (name) return false;
   return true;
 };
@@ -46,6 +45,7 @@ const isNameInParametersMissing = (body) => {
  * @return {boolean}
  */
 const doesNameBrakeCharactersLimit = (name) => {
+  if (name === undefined) return true;
   if (name.length <= 20 && typeof name === 'string') return false;
   return true;
 };
@@ -75,6 +75,7 @@ const doesSpeciesBreakCorrectSyntax = (species) => {
  */
 const areParametersBreakingNameSpeciesOnlyRule = (body) => {
   const bodykeys = Object.keys(body);
+  if (bodykeys.length === 0) return true;
   const isBodyBreakingNameAndSpeciesOnlyRule = bodykeys.every((props) => {
     return props === 'name' || props === 'species';
   });
@@ -90,14 +91,14 @@ const areParametersBreakingNameSpeciesOnlyRule = (body) => {
  * @return {object}
  */
 const areAnyParameterRulesBroken = (rhinoBody) => {
+  const { name, species } = rhinoBody;
   const areRulesBrokenObject = { isRuleBroken: true, errorMessage: '' };
 
-  if (isNameInParametersMissing(rhinoBody)) {
+  if (isNameInParametersMissing(name)) {
     areRulesBrokenObject.errorMessage = `The 'name' syntax is missing.\n 
       Please have the 'name' contained within the parameters`;
     return areRulesBrokenObject;
   }
-  const { name } = rhinoBody;
   if (doesNameBrakeCharactersLimit(name)) {
     areRulesBrokenObject.errorMessage = `The name has 20 more characters then permitted. \n
     please write a name between 1 - 20 characters`;
@@ -109,7 +110,6 @@ const areAnyParameterRulesBroken = (rhinoBody) => {
     Please have the 'species' contained within the parameters`;
     return areRulesBrokenObject;
   }
-  const { species } = rhinoBody;
   if (doesSpeciesBreakCorrectSyntax(species)) {
     areRulesBrokenObject.errorMessage = `The context in'species' is incorrect.\n 
     Please write the correct syntax allowed in 'species' within the parameters`;
@@ -127,5 +127,10 @@ const areAnyParameterRulesBroken = (rhinoBody) => {
 module.exports = {
   createRhinoMissingObject,
   areAnyParameterRulesBroken,
-  errorThrower
+  errorThrower,
+  isNameInParametersMissing,
+  doesNameBrakeCharactersLimit,
+  isSpeciesInParametersMissing,
+  doesSpeciesBreakCorrectSyntax,
+  areParametersBreakingNameSpeciesOnlyRule
 };
