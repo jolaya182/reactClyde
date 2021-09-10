@@ -26,3 +26,5 @@ app.use(router.routes());
 
 console.log(`Server listening on port: ${PORT}`);
 const server = app.listen(PORT);
+
+module.exports = server;

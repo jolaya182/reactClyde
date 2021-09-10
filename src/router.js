@@ -9,24 +9,19 @@ const Router = require('koa-router');
 const router = new Router();
 const model = require('./rhinoceros');
 const {
-  isRhinoByIdFound,
-  areAllRulesBroken,
-  isIdMissing,
+  createRhinoMissingObject,
+  areAnyParameterRulesBroken,
   errorThrower
 } = require('./utils/utils');
 
 /**
  * route that returns every rhinoceros or
- * a filtered part of the rhinoceros data
- *
+ * a filtered part of the rhinoceros based
+ * on the paramaters
  */
 router.get('/rhinoceros', (ctx) => {
   try {
     const { query } = ctx.request;
-    const isFilterOff = false;
-    const areRulesBrokenMessage = areAllRulesBroken(query, isFilterOff);
-    if (areRulesBrokenMessage) errorThrower(areRulesBrokenMessage, ctx);
-
     const allRhinocerosFiltered = model.filterRhinosByGivenParams(query);
     ctx.response.body = { allRhinocerosFiltered };
   } catch (error) {
@@ -34,21 +29,16 @@ router.get('/rhinoceros', (ctx) => {
   }
 });
 
-/**
- * route that finds the rhinoceros by Id
- *
- */
 router.get('/rhinocerosID', (ctx) => {
   try {
     const { query } = ctx.request;
     const { id } = query;
 
-    const isIdMissingMessage = isIdMissing(id);
-    if (isIdMissingMessage) errorThrower(isIdMissingMessage, ctx);
-    const rhino = model.getRhinoById(id);
-    const retrievedRhino = isRhinoByIdFound(rhino);
+    let retrievedRhinoObject = model.getRhinoById(id);
+    if (retrievedRhinoObject === undefined)
+      retrievedRhinoObject = createRhinoMissingObject();
 
-    ctx.response.body = { retrievedRhino };
+    ctx.response.body = { retrievedRhinoObject };
   } catch (error) {
     ctx.throw(500, error);
   }
@@ -56,8 +46,6 @@ router.get('/rhinocerosID', (ctx) => {
 
 /**
  * route that return all the rhinos sepecies that are endangered
- *
- *
  */
 router.get('/endangered', (ctx) => {
   try {
@@ -68,15 +56,18 @@ router.get('/endangered', (ctx) => {
 });
 
 /**
- * route that allows inserts of rhino objects to the json data object
- *
+ * route that allows inserts of rhino objects while
+ * enforcing the rhino properties rules
  */
 router.post('/rhinoceros', (ctx) => {
   try {
     const { body } = ctx.request;
-    const isFilterOff = true;
-    const areRulesBrokenMessage = areAllRulesBroken(body, isFilterOff);
-    if (areRulesBrokenMessage) errorThrower(areRulesBrokenMessage, ctx);
+    const { isRuleBroken, errorMessage } = areAnyParameterRulesBroken(body);
+
+    if (isRuleBroken) {
+      errorThrower(errorMessage, ctx);
+      return;
+    }
     ctx.response.body = model.newRhinoceros(body);
   } catch (error) {
     ctx.throw(500, error);

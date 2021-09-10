@@ -1,10 +1,11 @@
+/* eslint-disable class-methods-use-this */
 /**
  * @title: utils.js
  * @author: Javier Olaya
  * @date: 9/8/2021
  * @description: all the resuable functions throughout the application
  */
-const { allowSpeciesTable, allowedNameTable } = require('../const/const1');
+const { allowSpeciesTable } = require('../const/const');
 
 /**
  * determines if the rhino found is true
@@ -12,10 +13,7 @@ const { allowSpeciesTable, allowedNameTable } = require('../const/const1');
  * @param {object} rhino
  * @return {boolean}
  */
-const isRhinoByIdFound = (rhino) => {
-  if (rhino) {
-    return rhino;
-  }
+const createRhinoMissingObject = () => {
   const rhinoNotFound = {
     id: -1,
     name: 'name not registered',
@@ -23,64 +21,6 @@ const isRhinoByIdFound = (rhino) => {
   };
   return rhinoNotFound;
 };
-
-/**
- * checks the rhino object properties to see if they
- * include name and species
- *
- * @param {object} rhinoObject
- * @param {boolean} isFilterOff
- * @return {boolean}
- */
-const IsRulePropertyNameSpeciesEnforced = (rhinoObject, isFilterOff) => {
-  const properties = Object.keys(rhinoObject);
-
-  let arePropertiesValid = false;
-  arePropertiesValid = properties.every((prop) => allowedNameTable.has(prop));
-  if (properties.length < allowedNameTable.size && isFilterOff)
-    arePropertiesValid = false;
-  return arePropertiesValid;
-};
-
-/**
- * checks to see if the species names of the given
- * rhino matches with the correct names accepted by the application
- *
- * @param {object} rhinoObject
- * @return {boolean}
- */
-const IsRuleNameSpeciesValuesEnforced = (rhinoObject) => {
-  let areSpeciesNamesAllowed = false;
-  if (allowSpeciesTable.has(rhinoObject.species)) {
-    areSpeciesNamesAllowed = true;
-    return areSpeciesNamesAllowed;
-  }
-  return areSpeciesNamesAllowed;
-};
-
-/**
- * checks if the length of the name to the
- * rhinoceros is within 20 charaters and is
- * a valid string
- *
- * @param {object} rhinoObject
- * @param {boolean} isFilterOff
- * @return {boolean}
- */
-const isRuleNameLengthOfCharactersValidEnforced = (
-  rhinoObject,
-  isFilterOff
-) => {
-  const { name } = rhinoObject;
-  let numberOfCharactersValid = false;
-  if (!isFilterOff && !name) return true;
-  if (name.length <= 20 && typeof name === 'string') {
-    numberOfCharactersValid = true;
-    return numberOfCharactersValid;
-  }
-  return numberOfCharactersValid;
-};
-
 /**
  * helper function to throw errors
  *
@@ -92,53 +32,101 @@ const errorThrower = (message, ctx) => {
 };
 
 /**
+ * @param {object} body
+ * @return {boolean}
+ */
+const isNameInParametersMissing = (body) => {
+  const { name } = body;
+  if (name) return false;
+  return true;
+};
+
+/**
+ * @param {string} name
+ * @return {boolean}
+ */
+const doesNameBrakeCharactersLimit = (name) => {
+  if (name.length <= 20 && typeof name === 'string') return false;
+  return true;
+};
+
+/**
+ * @param {object} body
+ * @return {boolean}
+ */
+const isSpeciesInParametersMissing = (body) => {
+  const { species } = body;
+  if (species) return false;
+  return true;
+};
+
+/**
+ * @param {string} species
+ * @return {boolean}
+ */
+const doesSpeciesBreakCorrectSyntax = (species) => {
+  if (allowSpeciesTable.has(species)) return false;
+  return true;
+};
+
+/**
+ * @param {object} body
+ * @return {boolean}
+ */
+const areParametersBreakingNameSpeciesOnlyRule = (body) => {
+  const bodykeys = Object.keys(body);
+  const isBodyBreakingNameAndSpeciesOnlyRule = bodykeys.every((props) => {
+    return props === 'name' || props === 'species';
+  });
+  if (isBodyBreakingNameAndSpeciesOnlyRule) return false;
+  return true;
+};
+
+/**
  * checks that the parameters received comply with all
  * the rules of the application
  *
  * @param {object} rhino
  * @param {boolean} isFilterOff
- * @return {boolean}
+ * @return {object}
  */
-const areAllRulesBroken = (rhino, isFilterOff) => {
-  const isBodyPropertiesCorrect = IsRulePropertyNameSpeciesEnforced(
-    rhino,
-    isFilterOff
-  );
-  if (!isBodyPropertiesCorrect)
-    return `Rule Property Name Species is not Enforced.\n 
-      Properties have to be and written as the \n following 'name' and 'species' `;
+const areAnyParameterRulesBroken = (rhinoBody) => {
+  const areRulesBrokenObject = { isRuleBroken: true, errorMessage: '' };
 
-  const isBodyContentCorrect = IsRuleNameSpeciesValuesEnforced(rhino);
-  if (!isBodyContentCorrect)
-    return `Rule Name Species Values is not Enforced.\n 
-      Species submitted is not within the permissible species,\n 
-      please write another species that is allowed`;
+  if (isNameInParametersMissing(rhinoBody)) {
+    areRulesBrokenObject.errorMessage = `The 'name' syntax is missing.\n 
+      Please have the 'name' contained within the parameters`;
+    return areRulesBrokenObject;
+  }
+  const { name } = rhinoBody;
+  if (doesNameBrakeCharactersLimit(name)) {
+    areRulesBrokenObject.errorMessage = `The name has 20 more characters then permitted. \n
+    please write a name between 1 - 20 characters`;
+    return areRulesBrokenObject;
+  }
 
-  const isNameNumberOfCharactersValid =
-    isRuleNameLengthOfCharactersValidEnforced(rhino, isFilterOff);
-  if (!isNameNumberOfCharactersValid)
-    return `Rule Name Number Of Characters is not Valid.\n 
-        The name submitted is not within the permissible number of characters,\n 
-        please write a name between 1 - 20 characters`;
-
-  return false;
-};
-
-/**
- * determines is given id is found
- *
- * @param {interger} id
- * @return {boolean}
- */
-const isIdMissing = (id) => {
-  const message = `missing id parameter,\n please provide a rhino id`;
-  if (!id) return message;
-  return false;
+  if (isSpeciesInParametersMissing(rhinoBody)) {
+    areRulesBrokenObject.errorMessage = `The 'species' syntax is missing.\n 
+    Please have the 'species' contained within the parameters`;
+    return areRulesBrokenObject;
+  }
+  const { species } = rhinoBody;
+  if (doesSpeciesBreakCorrectSyntax(species)) {
+    areRulesBrokenObject.errorMessage = `The context in'species' is incorrect.\n 
+    Please write the correct syntax allowed in 'species' within the parameters`;
+    return areRulesBrokenObject;
+  }
+  if (areParametersBreakingNameSpeciesOnlyRule(rhinoBody)) {
+    areRulesBrokenObject.errorMessage = `There are parameters that do not match 'name' or 'species' syntax .\n 
+    Please have 'names' and 'species' only within the parameters`;
+    return areRulesBrokenObject;
+  }
+  areRulesBrokenObject.isRuleBroken = false;
+  return areRulesBrokenObject;
 };
 
 module.exports = {
-  isRhinoByIdFound,
-  areAllRulesBroken,
-  isIdMissing,
+  createRhinoMissingObject,
+  areAnyParameterRulesBroken,
   errorThrower
 };
