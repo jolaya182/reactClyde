@@ -1,21 +1,14 @@
 /* global test, expect, describe  */
 const utils = require('../utils/utils');
 
-test.skip('createRhinoMissingObject should return an object with  negative and prop names that not registered', () => {
+test('createRhinoMissingObject should return an object with  negative and prop names that not registered', () => {
   const createdRhinoMissingObjectReceived = utils.createRhinoMissingObject();
-  //   console.log('createRhinoMissingObject', createdRhinoMissingObjectReceived);
   const RhinoMissingObjectExpected = {
     id: -1,
     name: 'name not registered',
     species: 'species not registered'
   };
   expect(createdRhinoMissingObjectReceived).toEqual(RhinoMissingObjectExpected);
-});
-
-test.skip('errorThrower should return an error', () => {
-  //   const messageExpected = 'any text suffices';
-  //   const messageReceived = utils.errorThrower('any text suffices');
-  //   console.log('messageReceived', messageReceived);
 });
 
 const validRhinoBody1 = {
@@ -30,26 +23,23 @@ const validRhinoBody2 = {
 
 const rhinoTestObjects1 = [validRhinoBody1, validRhinoBody2];
 
-describe.skip.each(rhinoTestObjects1)(
+describe.each(rhinoTestObjects1)(
   'areAnyParameterRulesBroken should test a valid rhino on 6 functions',
   (rhinoBody) => {
     const { name, species } = rhinoBody;
 
     test('areAnyParameterRulesBroken for the parameters should return true', () => {
       const receivedTestObject = utils.areAnyParameterRulesBroken(rhinoBody);
-      // console.log('receivedTestObject', receivedTestObject);
       expect(receivedTestObject.isRuleBroken).toBe(false);
     });
 
     test('isNameInParametersMissing name should return true', () => {
       const receivedBoolean = utils.isNameInParametersMissing(name);
-      // console.log('receivedTestObject', receivedTestObject);
       expect(receivedBoolean).toBe(false);
     });
 
     test('doesNameBrakeCharactersLimit', () => {
       const receivedBoolean = utils.doesNameBrakeCharactersLimit(name);
-      //   console.log('receivedBoolean', receivedBoolean);
       expect(receivedBoolean).toBe(false);
     });
 

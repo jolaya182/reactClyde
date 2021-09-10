@@ -21,15 +21,6 @@ const createRhinoMissingObject = () => {
   };
   return rhinoNotFound;
 };
-/**
- * helper function to throw errors
- *
- * @param {string} message
- * @param {object} ctx
- */
-const errorThrower = (message, ctx) => {
-  ctx.throw(400, message);
-};
 
 /**
  * @param {object} body
@@ -127,7 +118,6 @@ const areAnyParameterRulesBroken = (rhinoBody) => {
 module.exports = {
   createRhinoMissingObject,
   areAnyParameterRulesBroken,
-  errorThrower,
   isNameInParametersMissing,
   doesNameBrakeCharactersLimit,
   isSpeciesInParametersMissing,

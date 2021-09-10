@@ -10,8 +10,7 @@ const router = new Router();
 const model = require('./rhinoceros');
 const {
   createRhinoMissingObject,
-  areAnyParameterRulesBroken,
-  errorThrower
+  areAnyParameterRulesBroken
 } = require('./utils/utils');
 
 /**
@@ -19,11 +18,12 @@ const {
  * a filtered part of the rhinoceros based
  * on the paramaters
  */
-router.get('/rhinoceros', (ctx) => {
+router.get('/rhinoceros', (ctx, next) => {
   try {
     const { query } = ctx.request;
     const allRhinocerosFiltered = model.filterRhinosByGivenParams(query);
-    ctx.response.body = { allRhinocerosFiltered };
+    ctx.response.body = allRhinocerosFiltered;
+    next();
   } catch (error) {
     ctx.throw(500, error);
   }
@@ -65,7 +65,7 @@ router.post('/rhinoceros', (ctx) => {
     const { isRuleBroken, errorMessage } = areAnyParameterRulesBroken(body);
 
     if (isRuleBroken) {
-      errorThrower(errorMessage, ctx);
+      ctx.throw(400, errorMessage);
       return;
     }
     ctx.response.body = model.newRhinoceros(body);
