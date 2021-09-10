@@ -87,7 +87,6 @@ const areParametersBreakingNameSpeciesOnlyRule = (body) => {
  * the rules of the application
  *
  * @param {object} rhino
- * @param {boolean} isFilterOff
  * @return {object}
  */
 const areAnyParameterRulesBroken = (rhinoBody) => {
