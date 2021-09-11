@@ -61,7 +61,7 @@ describe.each(rhinoTestObjects1)(
       expect(receivedBoolean).toBe(false);
     });
 
-    test.only('areParametersBreakingNameSpeciesOnlyRule', () => {
+    test('areParametersBreakingNameSpeciesOnlyRule', () => {
       const receivedBoolean =
         rhinoRulesInstant.areParametersBreakingNameSpeciesOnlyRule(rhinoBody);
       expect(receivedBoolean).toBe(false);

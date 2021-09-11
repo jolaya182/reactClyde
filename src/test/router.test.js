@@ -13,8 +13,9 @@ afterAll(() => {
   server.close();
 });
 
-describe('testing 4 basic routes', () => {
-  test('get route with no filters should return and array of rhino objects', async () => {
+describe(`testing 4 basic routes`, () => {
+  test(`get route with no filters should return and 
+    array of rhino objects`, async () => {
     const arrayOfRhinoObjectsReceived = await request(server).get(
       '/rhinoceros'
     );
@@ -41,10 +42,6 @@ describe('testing 4 basic routes', () => {
     filteredRhinoObjectsReceived = await request(server).get(
       `/rhinoceros/?species=${species}`
     );
-    console.log(
-      'filteredRhinoObjectsReceived',
-      filteredRhinoObjectsReceived.body
-    );
 
     expect(filteredRhinoObjectsReceived.body).toStrictEqual(
       filteredRhinoWhiteRhinocerosExpected
@@ -70,7 +67,7 @@ describe('testing 4 basic routes', () => {
     expect(foundRhinoObjectById.body).toStrictEqual(receivedRhinoCopy);
   });
 
-  test.only('get route that gets rhinoceros that are endangered', async () => {
+  test(`get route that gets rhinoceros that are endangered`, async () => {
     const endangeredRhinosExpected = [
       {
         species: 'indian_rhinoceros',
@@ -80,7 +77,6 @@ describe('testing 4 basic routes', () => {
     const endageredRhinoArrayReceived = await request(server).get(
       '/endangered'
     );
-    console.log('endageredRhinoArrayReceived', endageredRhinoArrayReceived);
     expect(endageredRhinoArrayReceived.body).toStrictEqual(
       endangeredRhinosExpected
     );
