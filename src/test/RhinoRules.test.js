@@ -1,4 +1,3 @@
-/* global test, expect, describe  */
 // eslint-disable-next-line import/extensions
 const { RhinoRules } = require('../utils/RhinoRules');
 

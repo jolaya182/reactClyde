@@ -78,3 +78,16 @@ The following node modules are used as part of the project and you may wish to r
 
 [You can get postman here](https://www.getpostman.com/apps)
 
+## Trouble Shoot
+
+for windows users
+If you are trying to run the test and
+If you get one of the following:
+`'jest' is not recognized as an internal or external command`
+
+use `npm i -g jest`
+
+`Cannot find module '@babel/preset-env'`
+
+use `npm uninstall @babel/preset-env`
+then use `npm i -D @babel/preset-env `
