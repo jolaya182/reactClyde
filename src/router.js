@@ -29,16 +29,16 @@ router.get('/rhinoceros', (ctx, next) => {
   }
 });
 
-router.get('/rhinocerosID', (ctx) => {
+router.get('/rhinocerosID', (ctx, next) => {
   try {
     const { query } = ctx.request;
     const { id } = query;
-
     let retrievedRhinoObject = rhinos.getRhinoById(id);
     if (retrievedRhinoObject === undefined)
       retrievedRhinoObject = RhinoRuleInstant.createRhinoMissingObject();
 
-    ctx.response.body = { retrievedRhinoObject };
+    ctx.response.body = retrievedRhinoObject;
+    next();
   } catch (error) {
     ctx.throw(500, error);
   }
@@ -47,9 +47,10 @@ router.get('/rhinocerosID', (ctx) => {
 /**
  * route that return all the rhinos sepecies that are endangered
  */
-router.get('/endangered', (ctx) => {
+router.get('/endangered', (ctx, next) => {
   try {
     ctx.response.body = rhinos.findEndangeredRhinos();
+    next();
   } catch (error) {
     ctx.throw(500, error);
   }
@@ -59,7 +60,7 @@ router.get('/endangered', (ctx) => {
  * route that allows inserts of rhino objects while
  * enforcing the rhino properties rules
  */
-router.post('/rhinoceros', (ctx) => {
+router.post('/rhinoceros', (ctx, next) => {
   try {
     const { body } = ctx.request;
     const { isRuleBroken, errorMessage } =
@@ -70,6 +71,7 @@ router.post('/rhinoceros', (ctx) => {
       return;
     }
     ctx.response.body = rhinos.newRhinoceros(body);
+    next();
   } catch (error) {
     ctx.throw(500, error);
   }

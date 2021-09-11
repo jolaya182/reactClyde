@@ -62,9 +62,9 @@ class Rhinoceroses {
       speciesCount.set(rhinoSpecies, 1);
     });
     const endangeredSpeciesArray = Array.from(endangeredSpecies).map(
-      ([key, value]) => ({
-        key,
-        value
+      ([species, name]) => ({
+        species,
+        name
       })
     );
     return endangeredSpeciesArray;
