@@ -7,11 +7,16 @@
 const Router = require('koa-router');
 
 const router = new Router();
-const { Rhinoceroses } = require('./rhinoceros');
-const { RhinoRules } = require('./utils/RhinoRules');
-
-const rhinos = new Rhinoceroses();
-const RhinoRuleInstant = new RhinoRules();
+const {
+  filterRhinosByGivenParams,
+  getRhinoById,
+  findEndangeredRhinos,
+  newRhinoceros
+} = require('./rhinoceros');
+const {
+  createRhinoMissingObject,
+  areAnyParameterRulesBroken
+} = require('./utils/RhinoRules');
 
 /**
  * route that returns every rhinoceros or
@@ -21,7 +26,7 @@ const RhinoRuleInstant = new RhinoRules();
 router.get('/rhinoceros', (ctx, next) => {
   try {
     const { query } = ctx.request;
-    const allRhinocerosFiltered = rhinos.filterRhinosByGivenParams(query);
+    const allRhinocerosFiltered = filterRhinosByGivenParams(query);
     ctx.response.body = allRhinocerosFiltered;
     next();
   } catch (error) {
@@ -33,9 +38,9 @@ router.get('/rhinocerosID', (ctx, next) => {
   try {
     const { query } = ctx.request;
     const { id } = query;
-    let retrievedRhinoObject = rhinos.getRhinoById(id);
+    let retrievedRhinoObject = getRhinoById(id);
     if (retrievedRhinoObject === undefined)
-      retrievedRhinoObject = RhinoRuleInstant.createRhinoMissingObject();
+      retrievedRhinoObject = createRhinoMissingObject();
 
     ctx.response.body = retrievedRhinoObject;
     next();
@@ -45,11 +50,11 @@ router.get('/rhinocerosID', (ctx, next) => {
 });
 
 /**
- * route that return all the rhinos sepecies that are endangered
+ * route that return all the rhinoceroses sepecies that are endangered
  */
 router.get('/endangered', (ctx, next) => {
   try {
-    ctx.response.body = rhinos.findEndangeredRhinos();
+    ctx.response.body = findEndangeredRhinos();
     next();
   } catch (error) {
     ctx.throw(500, error);
@@ -63,14 +68,13 @@ router.get('/endangered', (ctx, next) => {
 router.post('/rhinoceros', (ctx, next) => {
   try {
     const { body } = ctx.request;
-    const { isRuleBroken, errorMessage } =
-      RhinoRuleInstant.areAnyParameterRulesBroken(body);
+    const { isRuleBroken, errorMessage } = areAnyParameterRulesBroken(body);
 
     if (isRuleBroken) {
       ctx.throw(400, errorMessage);
       return;
     }
-    ctx.response.body = rhinos.newRhinoceros(body);
+    ctx.response.body = newRhinoceros(body);
     next();
   } catch (error) {
     ctx.throw(500, error);
